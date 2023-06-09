@@ -51,6 +51,8 @@ if(UNIX AND (NOT APPLE) AND (NOT ANDROID) AND (NOT WITH_TIMVX))
   set(PATCHELF_EXE ${THIRD_PARTY_PATH}/patchelf/bin/patchelf)
 endif()
 
+set(CMAKE_C_COMPILER /usr/bin/aarch64-linux-gnu-gcc)
+set(CMAKE_CXX_COMPILER /usr/bin/aarch64-linux-gnu-g++)
 
 ############################# Basic Options for FastDeploy ################################
 option(WITH_GPU "Whether WITH_GPU=ON, will enable onnxruntime-gpu/paddle-infernce-gpu/poros-gpu" OFF)
@@ -514,7 +516,7 @@ if(MSVC)
   set_source_files_properties(${FD_FILES_REQUIRE_BIGOBJ} PROPERTIES COMPILE_FLAGS "/bigobj")
 endif()
 
-target_link_libraries(${LIBRARY_NAME} ${DEPEND_LIBS})
+target_link_libraries(${LIBRARY_NAME} ${DEPEND_LIBS} -lavcodec -lavformat -lavutil)
 # Note(qiuyanjun): Currently, we need to manually link the whole
 # leveldb static lib into fastdeploy lib if PADDLEINFERENCE_WITH_ENCRYPT_AUTH
 # is 'ON'. Will remove this policy while the bug of paddle inference lib with
@@ -741,7 +743,7 @@ if(BUILD_FASTDEPLOY_PYTHON)
   else()
     add_custom_target(copy_fd_libraries ALL COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/*.so* ${PROJECT_SOURCE_DIR}/python/fastdeploy/libs/ DEPENDS ${PY_LIBRARY_NAME})
   endif()
-  add_custom_target(copy_third_libraries ALL COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/third_libs/install ${PROJECT_SOURCE_DIR}/python/fastdeploy/libs/third_libs DEPENDS ${PY_LIBRARY_NAME})
+#  add_custom_target(copy_third_libraries ALL COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/third_libs/install ${PROJECT_SOURCE_DIR}/python/fastdeploy/libs/third_libs DEPENDS ${PY_LIBRARY_NAME})
 endif(BUILD_FASTDEPLOY_PYTHON)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
